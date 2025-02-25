@@ -104,10 +104,32 @@
             border-color: #dc3545;
             background-color: #f8d7da;
         }
+        .language-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .language-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #e0e0e0;
+        }
+        .language-btn.active {
+            background-color: #4a90e2;
+            color: white;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="language-switch">
+            <button class="language-btn active" onclick="switchLanguage('hebrew')">עברית</button>
+            <button class="language-btn" onclick="switchLanguage('spanish')">Español</button>
+        </div>
         <h1>English Irregular Verbs Practice</h1>
         <div class="score">Score: <span id="scoreDisplay">0</span></div>
         
@@ -152,6 +174,7 @@
                 pastSimple: 'was/were',
                 pastParticiple: 'been',
                 translation: 'להיות',
+                spanishTranslation: 'ser/estar',
                 example: 'I am happy today, I was sad yesterday, I have been here before'
             },
             {
@@ -159,6 +182,7 @@
                 pastSimple: 'began',
                 pastParticiple: 'begun',
                 translation: 'להתחיל',
+                spanishTranslation: 'empezar/comenzar',
                 example: 'I begin work at 9, I began yesterday, I have begun the project'
             },
             {
@@ -166,6 +190,7 @@
                 pastSimple: 'broke',
                 pastParticiple: 'broken',
                 translation: 'לשבור',
+                spanishTranslation: 'romper',
                 example: 'I break things, I broke the glass, I have broken my phone'
             },
             {
@@ -173,6 +198,7 @@
                 pastSimple: 'brought',
                 pastParticiple: 'brought',
                 translation: 'להביא',
+                spanishTranslation: 'traer',
                 example: 'I bring food, I brought lunch, I have brought my laptop'
             },
             {
@@ -180,6 +206,7 @@
                 pastSimple: 'built',
                 pastParticiple: 'built',
                 translation: 'לבנות',
+                spanishTranslation: 'construir',
                 example: 'I build houses, I built this house, I have built many houses'
             },
             {
@@ -194,6 +221,7 @@
                 pastSimple: 'caught',
                 pastParticiple: 'caught',
                 translation: 'לתפוס',
+                spanishTranslation: 'atrapar/coger',
                 example: 'I catch the ball, I caught the bus, I have caught a cold'
             },
             {
@@ -208,6 +236,7 @@
                 pastSimple: 'came',
                 pastParticiple: 'come',
                 translation: 'לבוא',
+                spanishTranslation: 'venir',
                 example: 'I come home late, I came early yesterday, I have come to help'
             },
             {
@@ -215,6 +244,7 @@
                 pastSimple: 'did',
                 pastParticiple: 'done',
                 translation: 'לעשות',
+                spanishTranslation: 'hacer',
                 example: 'I do my homework, I did it yesterday, I have done my best'
             },
             {
@@ -222,6 +252,7 @@
                 pastSimple: 'drank',
                 pastParticiple: 'drunk',
                 translation: 'לשתות',
+                spanishTranslation: 'beber',
                 example: 'I drink water, I drank coffee, I have drunk too much'
             },
             {
@@ -229,6 +260,7 @@
                 pastSimple: 'drove',
                 pastParticiple: 'driven',
                 translation: 'לנהוג',
+                spanishTranslation: 'conducir',
                 example: 'I drive carefully, I drove to work, I have driven many cars'
             },
             {
@@ -236,6 +268,7 @@
                 pastSimple: 'ate',
                 pastParticiple: 'eaten',
                 translation: 'לאכול',
+                spanishTranslation: 'comer',
                 example: 'I eat breakfast, I ate lunch, I have eaten dinner'
             },
             {
@@ -243,6 +276,7 @@
                 pastSimple: 'fell',
                 pastParticiple: 'fallen',
                 translation: 'ליפול',
+                spanishTranslation: 'caer',
                 example: 'I fall sometimes, I fell yesterday, I have fallen many times'
             },
             {
@@ -250,6 +284,7 @@
                 pastSimple: 'felt',
                 pastParticiple: 'felt',
                 translation: 'להרגיש',
+                spanishTranslation: 'sentir',
                 example: 'I feel good, I felt sick, I have felt better'
             },
             {
@@ -257,6 +292,7 @@
                 pastSimple: 'found',
                 pastParticiple: 'found',
                 translation: 'למצוא',
+                spanishTranslation: 'encontrar',
                 example: 'I find solutions, I found my keys, I have found what I was looking for'
             },
             {
@@ -264,6 +300,7 @@
                 pastSimple: 'forgot',
                 pastParticiple: 'forgotten',
                 translation: 'לשכוח',
+                spanishTranslation: 'olvidar',
                 example: 'I forget names, I forgot my password, I have forgotten the address'
             },
             {
@@ -271,6 +308,7 @@
                 pastSimple: 'got',
                 pastParticiple: 'got/gotten',
                 translation: 'לקבל',
+                spanishTranslation: 'obtener/conseguir',
                 example: 'I get presents, I got a new job, I have gotten better at English'
             },
             {
@@ -365,11 +403,22 @@
         let currentVerbIndex = 0;
         let score = 0;
         let isAnswerVisible = false;
+        let currentLanguage = 'hebrew';
+
+        function switchLanguage(language) {
+            currentLanguage = language;
+            document.querySelectorAll('.language-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[onclick="switchLanguage('${language}')"]`).classList.add('active');
+            displayVerb();
+        }
 
         function displayVerb() {
             const verb = irregularVerbs[currentVerbIndex];
             document.getElementById('verbDisplay').textContent = verb.base;
-            document.getElementById('translation').textContent = verb.translation;
+            document.getElementById('translation').textContent = 
+                currentLanguage === 'hebrew' ? verb.translation : verb.spanishTranslation;
             document.getElementById('example').textContent = verb.example;
             
             if (isAnswerVisible) {
@@ -420,9 +469,21 @@
         }
 
         function startListening() {
-            if ('webkitSpeechRecognition' in window) {
-                const recognition = new webkitSpeechRecognition();
+            if (window.webkitSpeechRecognition || window.SpeechRecognition) {
+                const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+                const recognition = new SpeechRecognition();
                 recognition.lang = 'en-US';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+
+                recognition.onstart = function() {
+                    showFeedback(true, 'Listening... Speak now!');
+                };
+
+                recognition.onerror = function(event) {
+                    showFeedback(false, 'Error occurred in recognition: ' + event.error);
+                };
+
                 recognition.onresult = function(event) {
                     const result = event.results[0][0].transcript.toLowerCase();
                     const currentVerb = irregularVerbs[currentVerbIndex].base.toLowerCase();
@@ -435,9 +496,14 @@
                         showFeedback(false, `לא מדויק. ניסית: "${result}", המילה הנכונה: "${currentVerb}"`);
                     }
                 };
+
+                recognition.onend = function() {
+                    showFeedback(true, 'Finished listening.');
+                };
+
                 recognition.start();
             } else {
-                alert('הדפדפן שלך לא תומך בזיהוי קול');
+                showFeedback(false, 'Speech recognition is not supported in your browser. Please use Chrome.');
             }
         }
 
